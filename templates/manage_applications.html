@@ -1,0 +1,298 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Manage Applications - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold">Manage Applications</h2>
+        <h5 class="text-primary">{{ job.title }}</h5>
+        <p class="text-muted">{{ job.company }}</p>
+
+        <span class="badge bg-primary">
+            Total Applications: {{ total_applications }}
+        </span>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card p-4 mb-4">
+        <form method="GET">
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Search Applicant</label>
+                    <input
+                        type="text"
+                        name="q"
+                        class="form-control"
+                        placeholder="Enter candidate username"
+                        value="{{ search_query }}"
+                    >
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Filter by Status</label>
+                    <select name="status" class="form-select">
+
+                        <option value="">All Applications</option>
+
+                        <option value="pending"
+                            {% if selected_status == 'pending' %}selected{% endif %}>
+                            Pending
+                        </option>
+
+                        <option value="reviewed"
+                            {% if selected_status == 'reviewed' %}selected{% endif %}>
+                            Reviewed
+                        </option>
+
+                        <option value="shortlisted"
+                            {% if selected_status == 'shortlisted' %}selected{% endif %}>
+                            Shortlisted
+                        </option>
+
+                        <option value="rejected"
+                            {% if selected_status == 'rejected' %}selected{% endif %}>
+                            Rejected
+                        </option>
+
+                        <option value="accepted"
+                            {% if selected_status == 'accepted' %}selected{% endif %}>
+                            Accepted
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Search
+                    </button>
+                </div>
+
+                <div class="col-12">
+                    <a href="{% url 'manage_applications' job.id %}"
+                       class="btn btn-secondary btn-sm">
+                        Clear Filters
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Applications List -->
+    <div class="row">
+
+        {% for application in applications %}
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="fw-bold text-primary">
+                        {{ application.candidate.username }}
+                    </h5>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {{ application.candidate.email }}
+                    </p>
+
+                    <p>
+                        <strong>Applied:</strong>
+                        {{ application.applied_at|date:"d M Y" }}
+                    </p>
+
+                    <!-- Application Status -->
+                    <p>
+                        <strong>Current Status:</strong>
+
+                        {% if application.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+
+                        {% elif application.status == 'reviewed' %}
+                            <span class="badge bg-info text-dark">Reviewed</span>
+
+                        {% elif application.status == 'shortlisted' %}
+                            <span class="badge bg-primary">Shortlisted</span>
+
+                        {% elif application.status == 'accepted' %}
+                            <span class="badge bg-success">Accepted</span>
+
+                        {% elif application.status == 'rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% endif %}
+                    </p>
+
+                    <!-- Cover Letter -->
+                    <div class="mb-3">
+                        <strong>Cover Letter:</strong>
+                        <p class="mt-2">
+                            {{ application.cover_letter|linebreaksbr }}
+                        </p>
+                    </div>
+
+                    <!-- Resume -->
+                    <p>
+                        <strong>Resume:</strong>
+
+                        {% if application.resume %}
+                            <a href="{{ application.resume.url }}"
+                               target="_blank"
+                               class="btn btn-outline-primary btn-sm">
+                                View Resume
+                            </a>
+                        {% else %}
+                            No resume uploaded.
+                        {% endif %}
+                    </p>
+
+                    <hr>
+
+                    <!-- View Candidate Profile -->
+                    <a href="{% url 'view_candidate_profile' application.id %}"
+                       class="btn btn-outline-dark w-100 mb-3">
+                        View Candidate Profile
+                    </a>
+
+                    <!-- Schedule Interview -->
+                    <a href="{% url 'schedule_interview' application.id %}"
+                       class="btn btn-outline-primary w-100 mb-3">
+                        <i class="bi bi-calendar-check"></i>
+                        Schedule Interview
+                    </a>
+
+                    <hr>
+
+                    <!-- Update Application Status -->
+                    <form method="POST"
+                          action="{% url 'update_application_status' application.id %}">
+
+                        {% csrf_token %}
+
+                        <label class="form-label fw-semibold">
+                            Update Application Status
+                        </label>
+
+                        <select name="status" class="form-select mb-3">
+
+                            <option value="pending"
+                                {% if application.status == 'pending' %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="reviewed"
+                                {% if application.status == 'reviewed' %}selected{% endif %}>
+                                Reviewed
+                            </option>
+
+                            <option value="shortlisted"
+                                {% if application.status == 'shortlisted' %}selected{% endif %}>
+                                Shortlisted
+                            </option>
+
+                            <option value="accepted"
+                                {% if application.status == 'accepted' %}selected{% endif %}>
+                                Accepted
+                            </option>
+
+                            <option value="rejected"
+                                {% if application.status == 'rejected' %}selected{% endif %}>
+                                Rejected
+                            </option>
+
+                        </select>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            Update Status
+                        </button>
+
+                    </form>
+
+                    <!-- Interview Management -->
+                    <hr>
+
+                    <h6 class="fw-bold mb-3">Interview Management</h6>
+
+                    {% for interview in application.interviews.all %}
+
+                        <div class="border rounded p-3 mb-3">
+
+                            <p>
+                                <strong>Date:</strong>
+                                {{ interview.scheduled_at|date:"d M Y, h:i A" }}
+                            </p>
+
+                            <p>
+                                <strong>Location:</strong>
+                                {{ interview.location_or_link }}
+                            </p>
+
+                            {% if interview.status == 'scheduled' %}
+
+                                <span class="badge bg-success">Scheduled</span>
+
+                                <a href="{% url 'reschedule_interview' interview.id %}"
+                                   class="btn btn-primary btn-sm mt-2">
+                                    Reschedule
+                                </a>
+
+                                <form method="POST"
+                                      action="{% url 'cancel_interview' interview.id %}"
+                                      class="mt-2"
+                                      onsubmit="return confirm('Are you sure you want to cancel this interview?');">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm">
+                                        Cancel Interview
+                                    </button>
+
+                                </form>
+
+                            {% elif interview.status == 'cancelled' %}
+
+                                <span class="badge bg-danger">Cancelled</span>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% empty %}
+
+                        <p class="text-muted">No interview scheduled yet.</p>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                No applications found. Try changing your search or filter.
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <a href="{% url 'employer_dashboard' %}"
+       class="btn btn-secondary mt-3">
+        Back to Dashboard
+    </a>
+
+</div>
+
+{% endblock %}

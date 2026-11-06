@@ -1,0 +1,61 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Reschedule Interview - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm border-0 p-4">
+
+                <h2 class="fw-bold mb-3">Reschedule Interview</h2>
+
+                <p><strong>Candidate:</strong>
+                    {{ interview.application.candidate.username }}
+                </p>
+
+                <p><strong>Job:</strong>
+                    {{ interview.application.job.title }}
+                </p>
+
+                <hr>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Save New Interview Details
+                    </button>
+
+                    <a href="{% url 'manage_applications' interview.application.job.id %}"
+                       class="btn btn-outline-secondary w-100 mt-2">
+                        Back to Applications
+                    </a>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

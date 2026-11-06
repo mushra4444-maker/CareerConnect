@@ -1,0 +1,99 @@
+
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card p-4">
+
+                <div class="card-body">
+
+                    <h1 class="fw-bold text-primary mb-3">
+                        {{ job.title }}
+                    </h1>
+
+                    <h4 class="text-muted mb-4">
+                        {{ job.company }}
+                    </h4>
+
+                    <hr>
+
+                    <div class="row mb-4">
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Location:</strong>
+                            <p>{{ job.location }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Salary:</strong>
+                            <p>₹{{ job.salary }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Posted On:</strong>
+                            <p>{{ job.created_at|date:"d M Y" }}</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Job Status:</strong>
+                            <p class="text-success">Active</p>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <h4 class="fw-bold mb-3">
+                        Job Description
+                    </h4>
+
+                    <p style="white-space: pre-line;">
+                        {{ job.description }}
+                    </p>
+
+                    <hr>
+
+                    {% if user.is_authenticated %}
+
+                        {% if user.userprofile.role == 'candidate' %}
+
+                            <a href="{% url 'apply_job' job.id %}"
+                               class="btn btn-primary">
+                                Apply Now
+                            </a>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <a href="{% url 'login' %}"
+                           class="btn btn-primary">
+                            Login to Apply
+                        </a>
+
+                    {% endif %}
+
+                    <a href="{% url 'job_list' %}"
+                       class="btn btn-outline-secondary ms-2">
+                        Back to Jobs
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

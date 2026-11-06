@@ -1,0 +1,93 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Interviews - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <h2 class="fw-bold mb-2">My Interviews</h2>
+
+    <p class="text-muted mb-4">
+        View your job interview schedules and updates.
+    </p>
+
+    {% if interviews %}
+
+        <div class="row">
+
+            {% for interview in interviews %}
+
+                <div class="col-md-6 mb-4">
+
+                    <div class="card shadow-sm border-0 h-100 p-3">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold text-primary">
+                                {{ interview.application.job.title }}
+                            </h5>
+
+                            <p class="mb-2">
+                                <strong>Company:</strong>
+                                {{ interview.application.job.company }}
+                            </p>
+
+                            <p class="mb-2">
+                                <strong>Date and Time:</strong>
+                                {{ interview.scheduled_at|date:"d M Y, h:i A" }}
+                            </p>
+
+                            <p class="mb-2">
+                                <strong>Location / Meeting Link:</strong>
+                                {{ interview.location_or_link }}
+                            </p>
+
+                            {% if interview.instructions %}
+                                <p class="mb-2">
+                                    <strong>Instructions:</strong>
+                                    {{ interview.instructions }}
+                                </p>
+                            {% endif %}
+
+                            {% if interview.status == 'scheduled' %}
+
+                                <span class="badge bg-success">
+                                    Interview Scheduled
+                                </span>
+
+                            {% elif interview.status == 'cancelled' %}
+
+                                <span class="badge bg-danger">
+                                    Interview Cancelled
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="alert alert-info">
+            You don't have any interview schedules yet.
+        </div>
+
+    {% endif %}
+
+    <a href="{% url 'candidate_dashboard' %}"
+       class="btn btn-outline-primary mt-3">
+        Back to Dashboard
+    </a>
+
+</div>
+
+{% endblock %}

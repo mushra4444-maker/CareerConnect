@@ -1,0 +1,53 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home - CareerConnect{% endblock %}
+
+{% block content %}
+
+<section class="hero text-center">
+    <div class="container">
+
+        <h1>Find Your Dream Job Today</h1>
+
+        <p>
+            Connect with top companies and discover
+            exciting career opportunities.
+        </p>
+
+        <a href="/jobs/" class="btn btn-primary btn-lg">
+            Explore Jobs
+        </a>
+
+        <a href="/accounts/register/"
+           class="btn btn-outline-primary btn-lg">
+            Create Account
+        </a>
+
+    </div>
+</section>
+{% if user.is_authenticated %}
+
+    {% if user.userprofile.role == 'candidate' %}
+
+        <a href="{% url 'candidate_dashboard' %}">
+            Candidate Dashboard
+        </a>
+
+    {% elif user.userprofile.role == 'employer' %}
+
+        <a href="{% url 'employer_dashboard' %}">
+            Employer Dashboard
+        </a>
+
+    {% endif %}
+
+{% else %}
+
+    <a href="{% url 'login' %}">Login</a>
+
+    <a href="{% url 'register' %}">Register</a>
+
+{% endif %}
+
+{% endblock %}

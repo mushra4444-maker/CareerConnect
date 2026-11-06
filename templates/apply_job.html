@@ -1,0 +1,56 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Apply for Job - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-8 col-lg-6">
+
+        <div class="card">
+            <div class="card-body p-4">
+
+                <h2 class="text-center text-primary mb-4">
+                    Apply for {{ job.title }}
+                </h2>
+
+                <p class="text-center text-muted">
+                    {{ job.company }} | {{ job.location }}
+                </p>
+
+                <form method="POST" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Upload Resume (PDF)</label>
+                        {{ form.resume }}
+                        {% for error in form.resume.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Cover Letter</label>
+                        {{ form.cover_letter }}
+                        {% for error in form.cover_letter.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Submit Application
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

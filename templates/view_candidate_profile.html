@@ -1,0 +1,95 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Candidate Profile - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <div class="card p-4">
+
+        <div class="text-center mb-4">
+
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}"
+                     class="rounded-circle mb-3"
+                     width="140"
+                     height="140"
+                     style="object-fit: cover;"
+                     alt="Candidate Profile">
+            {% else %}
+                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                     style="width:140px;height:140px;font-size:45px;">
+                    {{ candidate.username|first|upper }}
+                </div>
+            {% endif %}
+
+            <h2 class="fw-bold">
+                {{ profile.full_name|default:candidate.username }}
+            </h2>
+
+            <p class="text-muted">{{ candidate.email }}</p>
+
+        </div>
+
+        <hr>
+
+        <h5 class="fw-bold">Contact Information</h5>
+
+        <p><strong>Phone:</strong>
+            {{ profile.phone|default:"Not provided" }}
+        </p>
+
+        <p><strong>Location:</strong>
+            {{ profile.location|default:"Not provided" }}
+        </p>
+
+        <hr>
+
+        <h5 class="fw-bold">Professional Skills</h5>
+
+        <p>{{ profile.skills|default:"Not provided"|linebreaks }}</p>
+
+        <hr>
+
+        <h5 class="fw-bold">Education</h5>
+
+        <p>{{ profile.education|default:"Not provided" }}</p>
+
+        <hr>
+
+        <h5 class="fw-bold">Professional Summary</h5>
+
+        <p>{{ profile.summary|default:"Not provided"|linebreaks }}</p>
+
+        <hr>
+
+        <h5 class="fw-bold">Job Application</h5>
+
+        <p><strong>Applied for:</strong> {{ application.job.title }}</p>
+
+        <p><strong>Company:</strong> {{ application.job.company }}</p>
+
+        <p><strong>Application Status:</strong>
+            {{ application.get_status_display }}
+        </p>
+
+        {% if application.resume %}
+            <a href="{{ application.resume.url }}"
+               class="btn btn-success"
+               target="_blank">
+                View Candidate Resume
+            </a>
+        {% endif %}
+
+        <a href="{% url 'manage_applications' application.job.id %}"
+           class="btn btn-secondary mt-3">
+            Back to Applications
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

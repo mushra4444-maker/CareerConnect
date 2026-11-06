@@ -1,0 +1,133 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Employer Dashboard - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Employer Dashboard</h2>
+            <p class="text-muted">Manage your job postings.</p>
+        </div>
+
+        <a href="{% url 'post_job' %}" class="btn btn-primary">
+            + Post New Job
+        </a>
+    </div>
+
+    <div class="row">
+
+        {% for job in jobs %}
+
+        <div class="col-md-6 col-lg-4 mb-4">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <h4 class="text-primary">{{ job.title }}</h4>
+
+                    <h6 class="text-muted mb-3">
+                        {{ job.company }}
+                    </h6>
+
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+
+                    <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+
+                    <p>
+                        <strong>Posted:</strong>
+                        {{ job.created_at|date:"d M Y" }}
+                    </p>
+
+                    <p>
+                        <strong>Applications:</strong>
+                        {{ job.applications.count }}
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+
+                        {% if job.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Closed</span>
+                        {% endif %}
+                    </p>
+
+                    <div class="d-grid gap-2">
+
+                        <a href="{% url 'manage_applications' job.id %}"
+                           class="btn btn-outline-primary">
+                            Manage Applications
+                        </a>
+
+                        <a href="{% url 'edit_job' job.id %}"
+                           class="btn btn-warning">
+                            Edit Job
+                        </a>
+
+                        <form method="POST"
+                              action="{% url 'toggle_job_status' job.id %}">
+
+                            {% csrf_token %}
+
+                            {% if job.is_active %}
+                                <button type="submit"
+                                        class="btn btn-secondary w-100">
+                                    Close Job
+                                </button>
+                            {% else %}
+                                <button type="submit"
+                                        class="btn btn-success w-100">
+                                    Reopen Job
+                                </button>
+                            {% endif %}
+
+                        </form>
+
+                        <form method="POST"
+                              action="{% url 'delete_job' job.id %}"
+                              onsubmit="return confirm('Are you sure you want to delete this job?');">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-danger w-100">
+                                Delete Job
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                You have not posted any jobs yet.
+
+                <br><br>
+
+                <a href="{% url 'post_job' %}" class="btn btn-primary">
+                    Post Your First Job
+                </a>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

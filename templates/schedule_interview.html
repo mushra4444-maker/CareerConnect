@@ -1,0 +1,64 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Schedule Interview - CareerConnect{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm border-0 p-4">
+
+                <h2 class="fw-bold mb-2">Schedule Interview</h2>
+
+                <p class="text-muted">
+                    Candidate: {{ application.candidate.username }}
+                </p>
+
+                <p>
+                    <strong>Job:</strong> {{ application.job.title }}
+                </p>
+
+                <hr>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Schedule Interview
+                    </button>
+
+                    <a href="{% url 'manage_applications' application.job.id %}"
+                       class="btn btn-outline-secondary w-100 mt-2">
+                        Back to Applications
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
